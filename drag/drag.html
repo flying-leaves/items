@@ -1,0 +1,46 @@
+
+<!-- JS和HTML互转  -->
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JS和HTML互转</title>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.drag.js"></script>
+</head>
+<body> 
+<script>
+$(function () {
+	$('#contentbox').drag();
+	$('#bluebox').drag();
+})
+</script>
+
+<style>
+#contentbox,
+#bluebox {  
+	background-color:#f00;  
+	width:200px;  
+	height:200px;  
+	position:absolute;  
+	z-index:1; 
+}
+#bluebox {
+	background: #00008B;
+}
+</style>
+<div id="contentbox">
+	内容
+	<button>鼠标位置</button>
+	<button >标记</button>
+</div>
+
+<div id="bluebox">内容
+	<button >鼠标位置</button>
+	<button >标记</button>
+</div>
+
+<script>
+	
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>jquery制作轮播图效果</title>
+    <style type="text/css">
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    
+    #focus {
+        width: 350px;
+        position: relative;
+        height: 415px;
+    }
+    #focus img{
+    	vertical-align: top;
+    }
+    #midpic {
+        height: 350px;
+        width: 350px;
+        border: 1px solid #CDCDCD;
+	    position: relative;
+	    z-index: 1;
+    }
+    #midpic a {
+    	height: 350px;
+        width: 350px;
+        display: table-cell;
+	    text-align: center;
+	    vertical-align: middle;
+    }
+    #spWrap{
+    	margin: 10px 0 0 25px;
+    	width: 310px;
+    	overflow: hidden;
+    	height: 52px;
+    }
+    #smallpic{
+    	width: 2000px;
+    }
+    #smallpic li {
+        background: none repeat scroll 0 0 transparent;
+	    float: left;
+	    height: 52px;
+	    width: 62px;
+    }
+    #smallpic a {
+        width: 50px;
+        height: 50px;
+       	border: 1px solid #CDCDCD;
+       	display: table-cell;
+	    text-align: center;
+	    vertical-align: middle;
+    }
+    #smallpic img{
+    	width: 50px;
+    }
+    #smallpic .select a{
+    	border:1px solid #f00;
+    }
+    .zoomDiv{
+    	z-index:999;
+    	position:absolute;
+    	top:0px;
+    	left:0px;
+    	width:200px;
+    	height:200px;
+    	background:#ffffff;
+    	border:1px solid #CCCCCC;
+    	display:none;
+    	text-align:center;
+    	overflow:hidden;
+    }
+	.zoomMask{
+		position:absolute;
+		background:url("images/zoom/mask.png") repeat scroll 0 0 transparent;
+		cursor:move;
+		z-index:1;
+	}
+	.prev-unable,
+	.next-unable,
+	.prev,
+	.next{
+		background: url("images/zoom/arrow.png");
+		position: absolute;
+		left: 0;
+		bottom:0;
+		background-position: 0 0;
+		width: 13px;
+		height: 54px;
+		text-indent: -999px;
+	}
+	.next-unable,
+	.next{
+		left: auto;
+		right: 0;
+		background-position: -14px 0;
+	}
+	.prev:hover{
+		background-position: -28px 0;
+	}
+	.next:hover{
+		background-position: -43px 0;
+	}
+	.prev-unable{
+		background-position: -57px 0;
+	}
+	.next-unable{
+		background-position: -70px 0;
+	}
+    </style>
+</head>
+
+<body>
+    <div id="focus">
+        <div id="midpic">
+        	<a href="javascript:;"><img src="images/zoom/01_mid.jpg" class="jqzoom" rel="images/zoom/01.jpg"></a>
+        </div>
+        <div class="smallpic-wrap" id="spWrap">
+	        <ul id="smallpic">
+	            <li><a href="javascript:;"><img src="images/zoom/01_small.jpg" mid="images/zoom/01_mid.jpg" big="images/zoom/01.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/02_small.jpg" mid="images/zoom/02_mid.jpg" big="images/zoom/02.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/03_small.jpg" mid="images/zoom/03_mid.jpg" big="images/zoom/03.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/04_small.jpg" mid="images/zoom/04_mid.jpg" big="images/zoom/04.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	            <li><a href="javascript:;"><img src="images/zoom/05_small.jpg" mid="images/zoom/05_mid.jpg" big="images/zoom/05.jpg"></a></li>
+	        </ul>
+        </div>
+        <a href="#" class="prev-unable">&lt;</a>
+        <a href="#" class="next">&gt;</a>
+    </div>
+</body>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/jquery.imagezoom.js"></script>
+<script>
+$(function(){
+	
+	$(".jqzoom").imagezoom({xzoom:350,yzoom:350});//??????????????
+	
+	// 获取页面的主要元素
+	var $focus = $('#focus');
+	var $midPic = $('#midpic');
+	var $smallPic = $('#smallpic');
+	var $spSrc = $('#smallpic').find('img').attr('src');
+	
+	var $li = $smallPic.children('li');
+	var index = 0; // 显示图片的初始化索引
+	
+	// 左箭头的点击事件
+	$focus.on('click', 'a.prev', function () {
+		index--;
+	
+		slider($(this));
+	})
+	
+	// 右箭头的点击事件
+	$focus.on('click', 'a.next', function () {
+		index++;
+		
+		slider($(this));
+	})
+	
+	function slider (_this) {
+		
+		if (index == 0){
+			_this.attr('class','prev-unable').next().attr('class','next');
+		} else if (index > $li.length - 6){
+			_this.attr('class','next-unable').prev().attr('class','prev');
+		}
+		
+		$smallPic.animate({marginLeft: '-'+$li.width()*index});
+	}
+	
+	// 通过小图带动大图的切换
+	$smallPic.on('mouseenter', 'li', function () {
+	    $(this).addClass('select').siblings().removeClass('select');
+	    $(".jqzoom").attr('src',$(this).find("img").attr("mid"));
+		$(".jqzoom").attr('rel',$(this).find("img").attr("big"));
+ 
+   })
+
+});
+</script>
+</html>
